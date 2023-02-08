@@ -1,0 +1,28 @@
+name: Scrape 
+on:
+  schedule:
+    - cron: "0 8 * * *" 
+  workflow_dispatch:
+
+jobs:
+  get-data:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Python3
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install libraries on virtual machine
+      run: python -m pip install bs4 requests
+    - uses: actions/checkout@v2
+    - name: Scrape
+      shell: bash
+      run: python scrape.py
+    - name: Add and commit data
+      run: |-	
+        git add .	
+        git config user.name "Automated"	
+        git config user.email "actions@users.noreply.github.com"	
+        git commit -m "Latest data" 	
+    - name: Push data to repository
+      run: git push
